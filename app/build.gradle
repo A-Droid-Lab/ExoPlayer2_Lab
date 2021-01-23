@@ -52,4 +52,7 @@ dependencies {
     implementation "io.coil-kt:coil:$coilVersion"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$rootProject.kotlinVersion"
+
+    //lottie
+    implementation 'com.airbnb.android:lottie:3.0.7'
 }

@@ -43,14 +43,12 @@ object DescriptionAdapter : MediaDescriptionAdapter {
     fun getCurrentLargeIcon() = currentMetadata?.findBitmapValue("APIC")
 
     override fun createCurrentContentIntent(player: Player): PendingIntent? {
-
         val notificationIntent = Intent(context, MainActivity::class.java)
         notificationIntent.action = NOTIFICATION_ACTION
         return PendingIntent.getActivity(context, 0, notificationIntent, 0)
     }
 
     private fun Metadata.findTextValue(key: String): String {
-
         for (i in 0 until length()) {
             val entry = this[i]
             if (entry is TextInformationFrame) {

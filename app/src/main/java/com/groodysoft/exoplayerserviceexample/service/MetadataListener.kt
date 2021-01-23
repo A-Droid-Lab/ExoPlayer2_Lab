@@ -16,12 +16,14 @@ class MetadataListener(private val trackSelector: MappingTrackSelector?) : Analy
         eventTime: EventTime, ignored: TrackGroupArray, trackSelections: TrackSelectionArray
     ) {
         val mappedTrackInfo = trackSelector?.currentMappedTrackInfo
+
         if (mappedTrackInfo != null) { // Log tracks associated to renderers.
             val rendererCount = mappedTrackInfo.rendererCount
             for (rendererIndex in 0 until rendererCount) {
                 val rendererTrackGroups =
                     mappedTrackInfo.getTrackGroups(rendererIndex)
                 val trackSelection = trackSelections[rendererIndex]
+
                 if (rendererTrackGroups.length > 0) { // Log metadata for at most one of the tracks selected for the renderer.
                     if (trackSelection != null) {
                         for (selectionIndex in 0 until trackSelection.length()) {

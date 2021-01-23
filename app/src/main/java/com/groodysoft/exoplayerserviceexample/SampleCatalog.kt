@@ -10,6 +10,9 @@ object SampleCatalog {
 
     // if these remote files become unavailable, they can be replaced with any other remote files
 
+    // remote mp3 파일은 트랙 이름, 앨범 타이틀, 커버 사진을 내장하였으며
+    // 그 값들은 여기에 정의되어 있다. local에서 쓸 수 있다.
+
     val tracks = listOf(
         TrackData("Desolate Field", "Sample Tunes", "http://groodysoft.com/music/samples/01.jpg", "http://groodysoft.com/music/samples/01.mp3"),
         TrackData("Dramatic Ambient", "Sample Tunes", "http://groodysoft.com/music/samples/02.jpg", "http://groodysoft.com/music/samples/02.mp3"),

@@ -50,9 +50,7 @@ fun isOreoPlus() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
 @SuppressLint("NewApi")
 fun Context.sendServiceIntent(action: String, stringExtra: String? = null) {
     Intent(this, PlayerService::class.java).apply {
-
         this.action = action
-
         if (stringExtra != null) {
             this.putExtra(SERVICE_EXTRA_STRING, stringExtra)
         }
@@ -83,7 +81,7 @@ class PlayerService : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        val trackSelector = DefaultTrackSelector( /* context= */this, AdaptiveTrackSelection.Factory())
+        val trackSelector = DefaultTrackSelector(this, AdaptiveTrackSelection.Factory())
 
         player = SimpleExoPlayer.Builder( /* context= */this)
             .setTrackSelector(trackSelector)
@@ -148,7 +146,6 @@ class PlayerService : Service() {
 }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-
         Log.i(logtag, intent.action!!)
         when (intent.action) {
 
@@ -157,12 +154,15 @@ class PlayerService : Service() {
                 val track = MainApplication.gson.fromJson(jsonTrack, TrackData::class.java)
                 player.prepare(buildMediaSource(track), false, false)
             }
+
             SERVICE_ACTION_CONTENT_TRACK_LIST -> {
+                //역직렬화 (JSON형태의 데이터를 객체로 변환)
                 val type = object : TypeToken<List<TrackData>>() {}.type
                 val jsonTrackList = intent.getStringExtra(SERVICE_EXTRA_STRING)
                 val tracks: List<TrackData> = MainApplication.gson.fromJson(jsonTrackList, type)
                 player.prepare(buildMediaSource(tracks), false, false)
             }
+
             SERVICE_ACTION_PLAY -> {
                 player.playWhenReady = true
             }
@@ -204,6 +204,7 @@ class PlayerService : Service() {
         return channelId
     }
 
+    //해당 어플 백그라운드 실행 도중, 다른 미디어 어플을 실행 시킬 경우 = 해당 어플의 오디오을 멈춤
     private val noisyAudioIntentFilter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
     private val audioNoisyReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -215,6 +216,7 @@ class PlayerService : Service() {
         }
     }
 
+    //메타 데이터를 받는 필터
     private val metadataIntentFilter = IntentFilter(ACTION_METADATA)
     private val metadataReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
