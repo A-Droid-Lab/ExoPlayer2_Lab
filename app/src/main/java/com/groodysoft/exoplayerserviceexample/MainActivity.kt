@@ -14,6 +14,7 @@ import com.google.android.exoplayer2.Player.*
 import com.google.android.exoplayer2.util.Log
 import com.google.android.exoplayer2.util.RepeatModeUtil
 import com.groodysoft.exoplayerserviceexample.MainActivity.Companion.playerServiceIsBound
+import com.groodysoft.exoplayerserviceexample.fragment.PlayerFragment
 import com.groodysoft.exoplayerserviceexample.service.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.custom_audio_player.*
@@ -50,14 +51,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        //player view setting
-        playerView.controllerShowTimeoutMs = 0
-        playerView.controllerHideOnTouch = false
-        playerView.useArtwork = false //audio stream의 경우, false를 하는 게 맞음.
-        playerView.setShowShuffleButton(true)//suffle button 유무
-        playerView.setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_ALL)
-
         // bind to the service whether it's already running or not
         // save a flag so we know to initialize and play the content
         // application 동작과 상관 없이 서비스를 바인드 시킨다.
@@ -76,85 +69,67 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        Log.d("플레이어서비스이즈 바운드 :: ", playerServiceIsBound.toString())
         if (playerServiceIsBound) {
             bindPlayer()
         }
     }
 
     private fun bindPlayer() {
-        //player view setting
-        lav_loading.apply {
-            repeatCount = LottieDrawable.INFINITE
-            playAnimation()
-        }
-
-        playerView.player = playerService?.player?.apply {
-            addListener(object : EventListener {
-                override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                    super.onPlayerStateChanged(playWhenReady, playbackState)
-                    when (playbackState){
-                        STATE_READY -> {
-                            lav_loading.visibility = View.GONE
-                        }
-                        STATE_BUFFERING -> {
-                            lav_loading.visibility = View.VISIBLE
-                        }
-                    }
-                }
-
-                override fun onPlayerError(error: ExoPlaybackException) {
-                    super.onPlayerError(error)
-                    Log.d(" @@@@@@ 에러 발생 @@@@@", " XXXXX ERROR XXXXX")
-                }
-            })
-        }
-
         //control view setting
         playerControlView.apply {
             player = playerService?.player
             showTimeoutMs = 0
+        }.setOnClickListener {
+            openBottomFragment()
         }
-        playerView.showController()
+
         LocalBroadcastManager.getInstance(MainApplication.context).sendBroadcast(Intent(ACTION_METADATA))
+    }
+
+    fun openBottomFragment(){
+        val playerFragment = PlayerFragment.newInstance()
+        playerFragment.show(supportFragmentManager,"")
     }
 
     private val metadataIntentFilter = IntentFilter(ACTION_METADATA)
     private val metadataReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (ACTION_METADATA == intent.action) {
-
                 playerService?.player?.let {
                     // based on the boolean in the DescriptionAdapter, this will either
                     // extract the metadata (title, album, cover art) from the embedded
                     // ID3 tags in the HTTP stream, or load it from the local data in the
                     // sample catalog
                     // DescriptionAdapter의 boolean값에 기반하여, HTTP Stream으로 metadata를 가져오거나 Local에서 불려지게 되어 있음.
-                    trackTitle.text = DescriptionAdapter.getCurrentContentTitle(it)
-                    trackSubtitle.text = DescriptionAdapter.getCurrentContentText(it)
+
+
+//                    trackTitle.text = DescriptionAdapter.getCurrentContentTitle(it)
+//                    trackSubtitle.text = DescriptionAdapter.getCurrentContentText(it)
 
                     custom_music_controller_tv_song.text = DescriptionAdapter.getCurrentContentTitle(it)
 
 
-                    if (DescriptionAdapter.useStreamExtraction) {
-                        //stream을 생성하여 동작을 한다면
-                        //coil을 쓰기에 가능한 lamda 식 함수
-                        coverArtImageView.load(DescriptionAdapter.getCurrentLargeIcon()) {
-                            placeholder(R.drawable.album_art_placeholder)
-                            crossfade(true)
-                            fallback(R.drawable.album_art_placeholder)
-                            error(R.drawable.album_art_placeholder)
-                        }
-
-                    } else {
-                        //로컬로 동작을 한다면?
-                        val track = SampleCatalog.tracks[it.currentWindowIndex]
-                        coverArtImageView.load(track.frontCoverUrl) {
-                            placeholder(R.drawable.album_art_placeholder)
-                            crossfade(true)
-                            fallback(R.drawable.album_art_placeholder)
-                            error(R.drawable.album_art_placeholder)
-                        }
-                    }
+//                    if (DescriptionAdapter.useStreamExtraction) {
+//                        //stream을 생성하여 동작을 한다면
+//                        //coil을 쓰기에 가능한 lamda 식 함수
+//                        coverArtImageView.load(DescriptionAdapter.getCurrentLargeIcon()) {
+//                            placeholder(R.drawable.album_art_placeholder)
+//                            crossfade(true)
+//                            fallback(R.drawable.album_art_placeholder)
+//                            error(R.drawable.album_art_placeholder)
+//                        }
+//
+//                    } else {
+//                        //로컬로 동작을 한다면?
+//                        val track = SampleCatalog.tracks[it.currentWindowIndex]
+//                        coverArtImageView.load(track.frontCoverUrl) {
+//                            placeholder(R.drawable.album_art_placeholder)
+//                            crossfade(true)
+//                            fallback(R.drawable.album_art_placeholder)
+//                            error(R.drawable.album_art_placeholder)
+//                        }
+//                    }
                 }
             }
         }

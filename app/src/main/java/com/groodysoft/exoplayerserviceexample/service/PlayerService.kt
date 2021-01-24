@@ -47,7 +47,6 @@ const val FOREGROUND_SERVICE_NOTIFICATION_ID = 101
 
 fun isOreoPlus() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
 
-@SuppressLint("NewApi")
 fun Context.sendServiceIntent(action: String, stringExtra: String? = null) {
     Intent(this, PlayerService::class.java).apply {
         this.action = action

@@ -6,36 +6,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.exoplayer2.ui.PlayerView
-        android:id="@+id/playerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/black"
-        app:played_color="@color/colorAccent"
-        app:scrubber_color="@color/colorAccent"
-        app:buffered_color="@color/colorAccentDim"
-        android:layout_marginBottom="100dp"
-        app:layout_constraintBottom_toTopOf="@+id/playerControlView"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="Overdraw" />
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/lav_loading"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:lottie_rawRes="@raw/audioload"
-        app:lottie_autoPlay="true"
-        />
+
+
 
     <com.google.android.exoplayer2.ui.PlayerControlView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/playerControlView"
-        app:layout_constraintTop_toBottomOf="@+id/playerView"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:controller_layout_id="@layout/custom_audio_player"
         android:layout_marginTop="10dp"
         />
